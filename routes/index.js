@@ -3,6 +3,7 @@ var router = express.Router();
 const userModel = require("./users"); //import both data files 3.
 const postModel = require("./posts");  //import both data files 3.
 const passport = require("passport");
+const upload = require('./multer'); // import multer here 
 
 const localStrategy = require("passport-local"); //...
 passport.use(new localStrategy(userModel.authenticate()));
@@ -20,6 +21,15 @@ router.get('/login', function(req, res, next) {
 
 router.get('/feed', function(req, res, next) {
   res.render('feed');
+});
+
+//handle file upload
+router.post('/upload',upload.single('file'), (req, res) => {
+  //access the uploaded file details via req.file
+  if (!req.file) {
+    return res.status(400).send('No files were uploaded.')
+  }
+  res.send('file uploaded successfully!');
 });
 
 

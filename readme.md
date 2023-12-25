@@ -13,4 +13,5 @@
 12. we will use this data assosiation later with a little edit.
 13. first create a passport, npm i passport passport-local passport-local-mongoose mongoose express-session ,then set the passport setup in app.js
 14. flash message work , npm i connect-flash, see code.
-15. 
+15. we need to create post with contain images and caption. so install multer for that.
+16. the file which is uploading save it as a post and give that post's postid to user and userid to post.
