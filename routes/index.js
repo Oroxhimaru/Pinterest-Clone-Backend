@@ -23,13 +23,21 @@ router.get('/feed', function(req, res, next) {
   res.render('feed');
 });
 
-//handle file upload
-router.post('/upload',upload.single('file'), (req, res) => {
+//handle file upload                             //this file below name come from profile.ejs name = "file"
+router.post('/upload', isLoggedIn ,upload.single('file'), async (req, res) => {
   //access the uploaded file details via req.file
   if (!req.file) {
     return res.status(400).send('No files were uploaded.')
   }
-  res.send('file uploaded successfully!');
+  const user = await userModel.findOne({username: req.session.passport.user}); //username getting save in user here
+  const post = await postModel.create({
+    image: req.file.filename,  //all name taken from post.js
+    imageText: req.body.filecaption,
+    user: user._id
+  });  //creating post
+  user.posts.push(post._id);  //giving post id to user.js
+  await user.save(); //noww the data save in moongodb
+  res.redirect('/profile');
 });
 
 
@@ -37,7 +45,7 @@ router.get('/profile', isLoggedIn, async function(req, res, next) {
   /*work for showing the username of profile page (go to profile.ejs after that) */
   const user = await userModel.findOne({
     username: req.session.passport.user //username got save in this till you are logged in.
-  });
+  }).populate('posts') //populate here means data will show up in profile page, posts is from user.js
   //console.log(user)
   res.render('profile', {user}); //put user here, passing user in profilepage
 });
